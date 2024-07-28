@@ -16,7 +16,6 @@ nix-build
 * bulk_extractor
 * chainsaw
 * chipsec
-* dissect
 * dc3dd
 * dmg2img
 * exiftool
