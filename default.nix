@@ -1,75 +1,61 @@
 { pkgs ? import <nixpkgs> { } }:
 
 let
+  tools = [
+    "acquire"
+    "afflib"
+    "autopsy"
+    "binwalk"
+    "bulk_extractor"
+    "chainsaw"
+    "chipsec"
+    "dc3dd"
+    "dmg2img"
+    "exiftool"
+    "fatcat"
+    "flare-floss"
+    "file"
+    "firefox_decrypt"
+    "foremost"
+    "hstsparser"
+    "libewf"
+    "mac-robber"
+    "maltego"
+    "ntfs3g"
+    "networkminer"
+    "oletools"
+    "osquery"
+    "pdf-parser"
+    "prowler"
+    "recoverjpeg"
+    "regripper"
+    "scalpel"
+    "sleuthkit"
+    "snort"
+    "tracee"
+    "trivy"
+    "unfurl"
+    "unhide"
+    "usbrip"
+    "volatility3"
+    "wireshark"
+    "yarGen"
+    "yara-x"
+  ];
+
   forensics = pkgs.symlinkJoin {
     name = "nix-forensics";
-    paths = with pkgs; [
-      autopsy
-      binwalk
-      bulk_extractor
-      chainsaw
-      dc3dd
-      dmg2img
-      exiftool
-      flare-floss
-      file
-      firefox_decrypt
-      foremost
-      libewf
-      mac-robber
-      ntfs3g
-      networkminer
-      oletools
-      pdf-parser
-      recoverjpeg
-      regripper
-      scalpel
-      sleuthkit
-      snort
-      unfurl
-      usbrip
-      volatility3
-      wireshark
-      yara-x
-    ];
+    paths = map (pkg: pkgs.${pkg}) tools;
   };
 
   createLinks = pkgs.lib.concatMapStringsSep "\n"
     (pkg: ''
       mkdir -p $out/bin/${pkg}
-      for binary in ${pkgs."${pkg}"}/bin/*; do
+      for binary in ${pkgs.${pkg}}/bin/*; do
         ln -s $binary $out/bin/${pkg}/$(basename $binary)
       done
     '')
-    (with pkgs; [
-      "autopsy"
-      "binwalk"
-      "bulk_extractor"
-      "chainsaw"
-      "dc3dd"
-      "dmg2img"
-      "exiftool"
-      "flare-floss"
-      "file"
-      "firefox_decrypt"
-      "foremost"
-      "libewf"
-      "mac-robber"
-      "ntfs3g"
-      "networkminer"
-      "oletools"
-      "pdf-parser"
-      "recoverjpeg"
-      "regripper"
-      "scalpel"
-      "sleuthkit"
-      "snort"
-      "unfurl"
-      "usbrip"
-      "volatility3"
-      "wireshark"
-      "yara-x"
-    ]);
+    tools;
 
 in
 pkgs.stdenv.mkDerivation {
